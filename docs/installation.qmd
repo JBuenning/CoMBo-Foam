@@ -10,13 +10,13 @@ The location of the cloned repository is not relevant as the location of the bin
 
 ```bash
 cd $WM_PROJECT_USER_DIR #optional
-git clone ... && cd ...
+git clone https://github.com/JBuenning/CoMBo-Foam.git && cd CoMBo-Foam/
 ./Allwmake
 ```
 
 ## Usage inside a simulation
 
-To use any of the functionality provided by the OpenFoam-dynamic-mesh-tools in a simulation, its libraries need to be linked explicitely at run-time. This is done by adding the following lines into the case `system/controlDict`:
+To use any of the functionality provided by CoMBo-Foam in a simulation, its libraries need to be linked explicitely at run-time. This is done by adding the following lines into the case `system/controlDict`:
 ```c++
 libs
 (
