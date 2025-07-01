@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="129.355mm"
+   height="85.25mm"
+   viewBox="0 0 129.35499 85.25"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="drill.svg"
+   inkscape:export-filename="../../OpenFOAM/jonas-12/OpenFoam-dynamic-mesh-tools/docs/examples/drill.svg"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="true"
+     inkscape:zoom="1.3986392"
+     inkscape:cx="386.80455"
+     inkscape:cy="146.21355"
+     inkscape:window-width="1854"
+     inkscape:window-height="1011"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid182"
+       units="mm"
+       spacingx="1"
+       spacingy="1"
+       originx="-54.74999"
+       originy="-104.875" />
+  </sodipodi:namedview>
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-54.749999,-104.875)">
+    <path
+       style="fill:none;stroke:#ff0000;stroke-width:0.5;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+       id="path2413"
+       sodipodi:type="arc"
+       sodipodi:cx="95"
+       sodipodi:cy="160"
+       sodipodi:rx="20"
+       sodipodi:ry="20"
+       sodipodi:start="0"
+       sodipodi:end="3.1415927"
+       sodipodi:open="true"
+       sodipodi:arc-type="arc"
+       d="m 115,160 a 20,20 0 0 1 -10,17.32051 20,20 0 0 1 -20.000001,0 A 20,20 0 0 1 75,160"
+       inkscape:export-filename="../../OpenFOAM/jonas-12/OpenFoam-dynamic-mesh-tools/docs/examples/drill.svg"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.5;stroke-linecap:square;stroke-dasharray:none"
+       d="M 75,160 V 110"
+       id="path2417" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.5;stroke-linecap:square;stroke-dasharray:none"
+       d="M 115,160 V 110"
+       id="path2419" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.5;stroke-linecap:square;stroke-dasharray:none"
+       d="M 94.999999,185 C 105,185 115.6559,182.65153 125,170 c 9.3441,-12.65153 10,-50 10,-60"
+       id="path2421"
+       sodipodi:nodetypes="czc" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.25;stroke-linecap:square;stroke-dasharray:2, 0.5, 0.25, 0.5;stroke-dashoffset:0"
+       d="m 94.999999,105 v 85"
+       id="path3973" />
+    <text
+       xml:space="preserve"
+       style="font-size:4.93889px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.05;stroke-linecap:square;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       x="101.04974"
+       y="113.54002"
+       id="text11537"><tspan
+         sodipodi:role="line"
+         id="tspan11535"
+         style="font-size:4.93889px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.05;stroke-dasharray:none"
+         x="101.04974"
+         y="113.54002">Drill</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.93889px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.0499999;stroke-linecap:square;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       x="118.97942"
+       y="113.50828"
+       id="text12265"><tspan
+         sodipodi:role="line"
+         id="tspan12263"
+         style="font-size:4.93889px;stroke-width:0.05"
+         x="118.97942"
+         y="113.50828">Water</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.93889px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.0499999;stroke-linecap:square;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       x="139.38942"
+       y="113.50828"
+       id="text12269"><tspan
+         sodipodi:role="line"
+         id="tspan12267"
+         style="font-size:4.93889px;stroke-width:0.05"
+         x="139.38942"
+         y="113.50828">Ice</tspan></text>
+    <path
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.15;stroke-linecap:square;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 115.22125,131.21663 25.96238,0.57786"
+       id="path12271" />
+    <path
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.15;stroke-linecap:square;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 112.89681,168.93134 22.27352,7.65075"
+       id="path12271-3"
+       sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       style="font-size:4.9389px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.15;stroke-linecap:square;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       x="144.66139"
+       y="133.18793"
+       id="text12275"><tspan
+         sodipodi:role="line"
+         style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.15"
+         x="144.66139"
+         y="133.18793"
+         id="tspan12277">Insulation</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.9389px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.15;stroke-linecap:square;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       x="136.99783"
+       y="178.56383"
+       id="text12275-6"><tspan
+         sodipodi:role="line"
+         style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.15"
+         x="136.99783"
+         y="178.56383"
+         id="tspan12277-7">Fixed Temperature</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.5;stroke-linecap:square;stroke-dasharray:none"
+       d="M 95,185 C 85,185 74.3441,182.65153 65,170 55.655899,157.34847 54.999999,120 54.999999,110"
+       id="path14959"
+       sodipodi:nodetypes="czc" />
+  </g>
+</svg>

@@ -1,0 +1,8 @@
+surfaceVelocityTools/surfaceVelocityTools.C
+onePhaseStefanMeltVelocity/onePhaseStefanMeltVelocityPointPatchVectorField.C
+twoPhaseStefanMeltVelocity/twoPhaseStefanMeltVelocityPointPatchVectorField.C
+kinematicSurfaceVelocity/kinematicSurfaceVelocityPointPatchVectorField.C
+
+meltFlowVelocity/meltFlowVelocityFvPatchVectorField.C
+
+LIB = $(FOAM_USER_LIBBIN)/libcombo-foam-bc

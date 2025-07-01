@@ -1,0 +1,51 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  12
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       pointVectorField;
+    object      pointMotionU;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 0 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+boundaryField
+{
+    right
+    {
+        type            fixedNormalSlip;
+        n               (1 0 0);
+    }
+    left
+    {
+        type            fixedNormalSlip;
+        n               (-1 0 0);
+    }
+    "(inlet|bottom)"
+    {
+        type            uniformFixedValue;
+        uniformValue    (0 0 0);
+    }
+    freeSurface
+    {
+        type                        kinematicSurfaceVelocity;
+        linearUpwindBlendingFactor  0.97;
+        laplaceSmoothing            true;
+        value                       $internalField;
+    }
+    frontAndBack
+    {
+        type            empty;
+    }
+}
+
+
+// ************************************************************************* //

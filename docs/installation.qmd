@@ -1,0 +1,30 @@
+---
+title: "Installation"
+---
+
+## Compilation
+
+The compilation requires an active OpenFOAM environment ([OpenFOAM](https://openfoam.org), v12).
+
+The location of the cloned repository is not relevant as the location of the binaries is fixed by environment variables from the OpenFOAM environment. However, the general choice for additional OpenFOAM code is whatever $WM_PROJECT_USER_DIR evaluates to. To download and compile, type
+
+```bash
+cd $WM_PROJECT_USER_DIR #optional
+git clone ... && cd ...
+./Allwmake
+```
+
+## Usage inside a simulation
+
+To use any of the functionality provided by the OpenFoam-dynamic-mesh-tools in a simulation, its libraries need to be linked explicitely at run-time. This is done by adding the following lines into the case `system/controlDict`:
+```c++
+libs
+(
+    "libcombo-foam-motionSolvers.so"
+    "libcombo-foam-bc.so"
+);
+```
+
+## Uninstalling
+
+The easiest way to remove all the compiled code is to delete the $FOAM_USER_LIBBIN directory. This will remove all the user-compiled libraries. If you have other libraries compiled that you want to keep, you have to look inside the folder and select manually.

@@ -1,0 +1,47 @@
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      functions;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+
+temperatureTransportWater
+{
+    type            scalarTransport;
+    libs            ( "libsolverFunctionObjects.so" );
+    field           T;
+    diffusivity     constant;
+    D               0.15e-6;
+    nCorr           1;
+    region          water;
+}
+
+#includeFunc calculatePhi(region=ice)
+
+temperatureTransportIce
+{
+    type            scalarTransport;
+    libs            ( "libsolverFunctionObjects.so" );
+    field           T;
+    diffusivity     constant;
+    D               1.02e-6;
+    nCorr           1;
+    region          ice;
+}
+
+
+drag
+{
+    type            forces;
+    libs            ( "libforces.so" );
+    patches         ( head shaft );
+    rho             rhoInf;
+    rhoInf          1000;
+    CofR            ( 0 0 0 );
+    region          water;
+}
+
+// ************************************************************************* //

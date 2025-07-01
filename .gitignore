@@ -1,0 +1,17 @@
+lnInclude/
+**/Make/*
+!**/Make/files
+!**/Make/options
+examples/**/[0-9]*/
+!examples/**/0/
+!examples/**/*[!0-9.]*
+examples/**/*.OpenFOAM
+examples/**/dynamicCode/
+examples/**/polyMesh/
+examples/**/postProcessing/
+compile_commands.json
+.quarto/
+_site/
+.cache
+.vscode/
+tmux_session

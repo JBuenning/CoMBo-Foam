@@ -1,0 +1,59 @@
+project:
+  type: website
+
+website:
+  title: CoMBo-Foam
+  favicon: logo_square.png
+  page-navigation: true
+  reader-mode: false
+  # repo-url: https://github.com/TODO
+  # repo-actions: [source, issue]
+
+  sidebar:
+    logo: logo_long.png
+    title: CoMBo-Foam
+    id: sidebar
+    style: "docked"
+    search: true
+    collapse-level: 3
+    tools:
+      - icon: github
+        href: https://github.com/TODO
+        text: Visit the Repository
+    contents:
+      - installation.qmd
+      - section: "Documentation"
+        contents:
+          - documentation/general_idea.qmd
+          - section: "Motion-Solver"
+            contents:
+              - documentation/explicitImplicitVelocityLaplacian.qmd
+          - section: "Mesh Velocity boundary conditions"
+            contents:
+              - documentation/mesh_velocity_bc.qmd
+              - documentation/onePhaseStefanMeltVelocity.qmd
+              - documentation/twoPhaseStefanMeltVelocity.qmd
+              - documentation/kinematicSurfaceVelocity.qmd
+          - section: "Miscellaneous"
+            contents:
+              - documentation/stefanFlowVelocity.qmd
+      - section: "Examples"
+        contents:
+          - examples/2D-stefan-problem.qmd
+          - examples/hot-point-drill.qmd
+          - examples/free-surface-wave.qmd
+
+format:
+  html:
+    code-links:
+      - text: Visit the Repository
+        icon: github
+        href: https://github.com/TODO
+    theme:
+      - cosmo
+      - brand
+    grid:
+      sidebar-width: 400px
+    # css: styles.css
+    toc: true
+

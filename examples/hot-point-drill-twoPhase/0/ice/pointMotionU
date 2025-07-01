@@ -1,0 +1,53 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  12
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       pointVectorField;
+    object      pointMotionU;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 0 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+boundaryField
+{
+    outlet
+    {
+        type            fixedNormalSlip;
+        n               (0 1 0);
+    }
+    back
+    {
+        type            wedge;
+    }
+    front
+    {
+        type            wedge;
+    }
+    ice_to_water
+    {
+        type            twoPhaseStefanMeltVelocity;
+        rhoTimesH       334e6;
+        URef            (0 5e-4 0);
+        kappa           2.22;
+        linearUpwindBlendingFactor  0.8;
+        laplaceSmoothing            true;
+        value           uniform (0 0 0);
+    }
+    ice
+    {
+        type            uniformFixedValue;
+        uniformValue    (0 0 0);
+    }
+}
+
+
+// ************************************************************************* //

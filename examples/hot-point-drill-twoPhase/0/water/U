@@ -1,0 +1,52 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  12
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       volVectorField;
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [ 0 1 -1 0 0 0 0 ];
+
+internalField   uniform ( 0 0 0 );
+
+boundaryField
+{
+    outlet
+    {
+        type            zeroGradient;
+    }
+    head
+    {
+        type            noSlip;
+    }
+    shaft
+    {
+        type            noSlip;
+    }
+    back
+    {
+        type            wedge;
+    }
+    front
+    {
+        type            wedge;
+    }
+    water_to_ice
+    {
+        type            meltFlowVelocity;
+        URef            (0 5e-4 0);
+        rhoRatio        0.917;
+        value           uniform (0 0 0);
+    }
+}
+
+
+// ************************************************************************* //

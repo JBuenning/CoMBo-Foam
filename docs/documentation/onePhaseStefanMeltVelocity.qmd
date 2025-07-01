@@ -1,0 +1,44 @@
+---
+title: "Stefan Melt Velocity (single region)"
+---
+
+## Description
+
+The *onePhaseStefanMeltVelocity* provides a boundary condition for the mesh velocity that calculates the melting/refreezing velocity according to the classical Stefan condition while assuming the adjacent phase to be at constant melt temperature. The velocity is calculated as
+
+$$ \mathbf{v} = - \frac{\kappa}{\rho_s h_m} (\nabla T \cdot \mathbf{n}) \mathbf{n} + (\mathbf{\Phi} \cdot \mathbf{n}) \mathbf{n}, $$
+
+where
+
+- $\mathbf{v}$: mesh velocity
+- $\mathbf{n}$: surface normal vector
+- $\kappa$: thermal conductivity
+- $\rho_s$: density of the material at solid state
+- $h_m$: latent heat of fusion
+- $\nabla T$: temperature gradient
+- $\mathbf{\Phi}$: constant velocity of the solid phase relative to a chosen referenece frame
+
+## Usage
+
+| Property                   | Description                                                                                                                                          | Required | Default value |
+|----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|----------|---------------|
+| kappaOverRhoH              | $$\frac{\kappa}{\rho_s h_m}$$                                                                                                                        | yes      |               |
+| URef                       | Velocity of the solid phase $\mathbf{\Phi}$ in chosen reference frame                                                                                       | no       | (0 0 0)       |
+| TName                      | Name of the temperature field                                                                                                                        | no       | T             |
+| linearUpwindBlendingFactor | blending between linear and upwind for the face-to-point interpolation (1 corresponds to full linear and 0 corresponds to full upwind interpolation) | no       | 0             |
+| laplaceSmoothing           | apply lapalace smoothing?                                                                                                                            | no       | no            |
+
+
+For a more detailed description of the more general settings, see [mesh velocity boundary conditions](mesh_velocity_bc.qmd).
+
+Example of the boundary condition specification:
+```c++
+<patchName>
+{
+    type            onePhaseStefanMeltVelocity;
+    kappaOverRhoH   1.8e-9; //liquid water
+    linearUpwindBlendingFactor  0;
+    laplaceSmoothing    yes;
+    value           uniform (0 0 0);
+}
+```

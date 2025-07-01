@@ -1,0 +1,184 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  12
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+convertToMeters 1.0;
+
+R       0.01; //radius of the drill
+L       0.025; //length of the drill
+delta   0.0005; //initial channel thickness
+alpha   1; //half opening angle of the wedge in degrees
+
+RInfty  0.03; //radius of ice container
+
+// mesh parameters //
+dx      0.0002; //width of first cell
+Ny_water      12; //number of cells in cross-channel direction
+dy_ice  0.0002; //height of first cell in the ice
+r_ice   1.03; //cell-to-cell expansion ration in ice
+
+
+Nx_head #calc "round(0.5 * $R * M_PI / $dx)";
+Nx_shaft #calc "round(($L - $R) / $dx)";
+
+Ny_ice	#calc "ceil( 1. / log($r_ice) * log(1.+($r_ice-1.) * ($RInfty - $delta) / $dy_ice) )";
+Ry_ice	#calc "1. / pow($r_ice, $Ny_ice - 1)";
+
+tanalpha #calc "tan(degToRad($alpha))";
+
+vertices
+(
+    //water
+    (0 #neg $delta 0)
+    (#calc "$R + $delta" $R #calc "-1. * ($R + $delta) * $tanalpha")
+    (#calc "$R + $delta" $L #calc "-1. * ($R + $delta) * $tanalpha")
+    ($R $L #calc "-1. * $R * $tanalpha")
+    ($R $R #calc "-1. * $R * $tanalpha")
+    (0 0 0)
+
+    (#calc "$R + $delta" $R #calc "($R + $delta) * $tanalpha")
+    (#calc "$R + $delta" $L #calc "($R + $delta) * $tanalpha")
+    ($R $L #calc "$R * $tanalpha")
+    ($R $R #calc "$R * $tanalpha")
+
+    //ice
+    (0 #calc "$R - $RInfty" 0)
+    ($RInfty $R #calc "-1. * $RInfty * $tanalpha")
+    ($RInfty $L #calc "-1. * $RInfty * $tanalpha")
+
+    ($RInfty $R #calc "$RInfty * $tanalpha")
+    ($RInfty $L #calc "$RInfty * $tanalpha")
+);
+
+blocks
+(
+    hex (0 1 4 5 0 6 9 5) water ($Nx_head $Ny_water 1) simpleGrading (1 1 1)
+    hex (1 2 3 4 6 7 8 9) water ($Nx_shaft $Ny_water 1) simpleGrading (1 1 1)
+    hex (10 11 1 0 10 13 6 0) ice ($Nx_head $Ny_ice 1) simpleGrading (1 $Ry_ice 1)
+    hex (11 12 2 1 13 14 7 6) ice ($Nx_shaft $Ny_ice 1) simpleGrading (1 $Ry_ice 1)
+);
+
+
+
+edges
+(
+ arc 0 1
+ (
+        #calc "sqrt(0.5) * ($R + $delta)"
+        #calc "$R - 1. * sqrt(0.5) * ($R + $delta)"
+        #calc "-1. * $tanalpha * sqrt(0.5) * ($R + $delta)"
+ )
+ arc 0 6
+ (
+        #calc "sqrt(0.5) * ($R + $delta)"
+        #calc "$R - 1. * sqrt(0.5) * ($R + $delta)"
+        #calc "$tanalpha * sqrt(0.5) * ($R + $delta)"
+ )
+ arc 5 4
+ (
+        #calc "sqrt(0.5) * $R"
+        #calc "$R - 1. * sqrt(0.5) * $R"
+        #calc "-1. * $tanalpha * sqrt(0.5) * $R"
+ )
+ arc 5 9
+ (
+        #calc "sqrt(0.5) * $R"
+        #calc "$R - 1. * sqrt(0.5) * $R"
+        #calc "$tanalpha * sqrt(0.5) * $R"
+ )
+ arc 10 11
+ (
+        #calc "sqrt(0.5) * $RInfty"
+        #calc "$R - 1. * sqrt(0.5) * $RInfty"
+        #calc "-1. * $tanalpha * sqrt(0.5) * $RInfty"
+ )
+ arc 10 13
+ (
+        #calc "sqrt(0.5) * $RInfty"
+        #calc "$R - 1. * sqrt(0.5) * $RInfty"
+        #calc "$tanalpha * sqrt(0.5) * $RInfty"
+ )
+);
+
+boundary
+(
+    symmetryAxis
+    {
+        type empty;
+        faces
+        (
+            (0 5 5 0)
+            (10 0 0 10)
+        );
+    }
+    outlet
+    {
+        type patch;
+        faces
+        (
+            (2 3 8 7)
+            (12 2 7 14)
+        );
+    }
+    head
+    {
+        type wall;
+        faces
+        (
+            (5 4 9 5)
+        );
+    }
+    shaft
+    {
+        type wall;
+        faces
+        (
+            (3 4 9 8)
+        );
+    }
+    ice
+    {
+        type wall;
+        faces
+        (
+            (10 11 13 10)
+            (11 12 14 13)
+        );
+    }
+    back
+    {
+        type wedge;
+        faces
+        (
+            (0 1 4 5)
+            (1 2 3 4)
+            (10 11 1 0)
+            (11 12 2 1)
+        );
+    }
+    front
+    {
+        type wedge;
+        faces
+        (
+            (0 6 9 5)
+            (6 7 8 9)
+            (10 13 6 0)
+            (13 14 7 6)
+        );
+    }
+);
+
+// ************************************************************************* //

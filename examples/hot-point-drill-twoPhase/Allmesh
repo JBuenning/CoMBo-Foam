@@ -1,0 +1,6 @@
+blockMesh
+splitMeshRegions -cellZones -overwrite -noFields
+rm constant/cellToRegion
+rm 0/cellToRegion
+paraFoam -region water -touch
+paraFoam -region ice -touch

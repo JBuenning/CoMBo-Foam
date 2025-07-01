@@ -1,0 +1,41 @@
+---
+title: "Motion Solver for implicit time stepping"
+---
+
+
+## Description
+
+The *explicitImplicitVelocityLaplacian* is a mesh motion solver for a fvMesh. It is based on solving the cell-centre Laplacian for the motion velocity. Inspired by the *motionSolver* *velocityLaplacian* but with the capabilities of treating the mesh velocity implicitely or semi-implicitely based on the $\Theta$-method. The mesh displacement is calculated as
+
+$$ \mathbf{X}^{(n)} = \mathbf{X}^{(n-1)} + \left( \Theta \mathbf{V}^{(n)} + (1 - \Theta) \mathbf{V}^{(n-1)} \right) \Delta t, $$
+
+where
+
+- $\mathbf{X}^{(n)}$: Mesh displacement at time step $n$
+- $\mathbf{V}^{(n)}$: Mesh velocity at time step $n$
+- $\Delta t$: time step size
+- $\Theta$: Parameter of the $\Theta$-method
+    - $\Theta = 0$: "Explicit Euler"
+    - $\Theta = 0.5$: "Crank-Nicolson"
+    - $\Theta = 1$: "Implicit Euler"
+
+## Usage
+
+Example Usage:
+```c++
+mover
+{
+    type    motionSolver;
+
+    motionSolver    explicitImplicitVelocityLaplacian;
+    theta           1;
+
+    diffusivity     uniform;
+}
+```
+
+When using the *explicitImplicitVelocityLaplacian*, the *moveMeshOuterCorrectors* inside the PIMPLE entry of the *fvSolution* dictionary should be set to "true". The reason for this is that the mesh velocity of the current time step can only be approached iteratively when coupled to other parameters of the solution. This of course only makes sense if the mesh velocity can be updated repeatately inside the inner iteration of the PIMPLE loop. For some setups this might not be possible. For example, for simulating melting/refreezing while solving for the temperature filed using the *scalarTransport* functionObject, the temperature filed is only updated once per time step and thus also the mesh velocity will not be correctly updated. For this case, the *explicitImplicitVelocityLaplacian*, should not be used.
+
+In general, if a purely explicit time step should be used and the mesh velocity does not depend directly on the value of the time index, then the builtin *motionSolver* of type *velocityLaplacian* can be used combined with the *moveMeshOuterCorrectors* set to "false" (instead of the *explicitImplicitVelocityLaplacian* with $\Theta = 0$).
+
+

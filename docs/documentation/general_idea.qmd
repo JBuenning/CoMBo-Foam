@@ -1,0 +1,63 @@
+---
+title: "The General Idea"
+---
+
+
+## Background and Motivation
+
+Most OpenFOAM solvers already include an interface for dynamic meshes. In addition, if the movement of the mesh is known beforehand, OpenFOAM provides strategies to compute the mesh movement by providing it as boundary conditions on all patches of the mesh. What is misssing is a general stragegy for coupled problems where the mesh velocity is a function of simulation results. This can be the case for example for melting/refreezing problems for which the velocity of the solid-liquid interface depends on the temperature field. At the same time, the evolution of the temperature field is itself influenced by topological changes of the mesh. This library therefore aims to provide a general strategy for coupled moving boundary problems.
+
+## Case Setup
+
+The case setup for all problems that involve moving boundaries will be the same (both for coupled and non-coupled problems). In addition to the files specific to the simulation, the file `constant/dynamicMeshDict` and the field *pointMotionU* will be needed:
+```
+<case>
+├── 0
+│   └── pointMotionU
+│   └── ...
+├── constant
+│   └── dynamicMeshDict
+│   └── ...
+├── ...
+```
+
+In OpenFOAM, mesh changes are generaly enabled by providing the `dynamicMeshDict` in the `constant/` directory. In principle, there are two types of mesh changes: Topological changes and mesh movement. Topological changes are the addition and removal of mesh points while mesh movement is the change of mesh point positions. Relevant in the following is the mesh movement. This library requires the mesh mover to be a *motionSolver* either of type *velocityLaplacian* or *explicitImplicitVelocityLaplacian*:
+```c++
+// from constant/dynamicMeshDict
+mover
+{
+    type            motionSolver;
+
+    motionSolver    velocityLaplacian;
+    // or
+    // motionSolver    explicitImplicitVelocityLaplacian;
+
+    // additional settings
+}
+```
+
+The *velocityLaplacian* motionSolver is already available within OpenFOAM. It can also be used to do mesh movement for coupled problems, however it limits the calculation of the moving boundary displacement to an explicit time integration scheme. The motionSolver *explicitImplicitVelocityLaplacian* is introduced with this library and can be used to do implicit or semi-implicit time integration. For more details see [explicitImplicitVelocityLaplacian](./explicitImplicitVelocityLaplacian.qmd).
+
+Both the *velocityLaplacian* and the *explicitImplicitVelocityLaplacian* motion solver are able to perform mesh movement by providing the mesh velocity as boundary conditions to all pointPatches of the mesh. The motion of the mesh-internal points is computed by solving a laplace equation for the mesh velocity (hence the name *velocityLaplacian*).
+
+The field *pointMotionU* contains the velocity of every mesh point at a given time step. It will be read and updated by the *motionSolver*. Here, boundary conditions for the mesh motion need to be specified. For example, to evolve a boundary with the patch name "solid_liquid_interface" based on melting/solidification, one can specify
+```c++
+// from 0/pointMotionU
+boundaryField
+{
+    solid_liquid_interface
+    {
+        type    onePhaseStefanMeltVelocity;
+        // additional settings
+    }
+}
+```
+
+This library introduces a number of new boundary conditions for the mesh velocity. All of these boundary conditions work in a similar way. Their shared functionality is explained in [Mesh velocity boundary conditions](./mesh_velocity_bc.qmd).
+
+From this shared functionality the following specific boundary conditions are derived:
+
+* melting/refreezing velocity according to the Stefan Condition for single-region ([onePhaseStefanMeltVelocity](onePhaseStefanMeltVelocity.qmd))
+* melting/refreezing velocity according to the Stefan Condition for multi-region ([twoPhaseStefanMeltVelocity](twoPhaseStefanMeltVelocity.qmd))
+* kinematic condition for free surface flow ([kinematicSurfaceVelocity](kinematicSurfaceVelocity.qmd))
+

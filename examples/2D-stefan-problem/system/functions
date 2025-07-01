@@ -1,0 +1,24 @@
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      functions;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+
+#includeFunc calculatePhi()
+
+temperatureTransport
+{
+    type            scalarTransport;
+    libs            ( "libsolverFunctionObjects.so" );
+    field           T;
+    diffusivity     constant;
+    D               1;
+    nCorr           2;
+}
+
+
+// ************************************************************************* //

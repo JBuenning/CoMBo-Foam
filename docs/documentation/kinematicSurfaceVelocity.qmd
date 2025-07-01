@@ -1,0 +1,29 @@
+---
+title: "Kinematic Surface Velocity"
+---
+
+## Description
+
+The *kinematicSurfaceVelocity* provides a free surface mesh velocity condition. This boundary condition will set the mesh velocity equal to the surface-normal component of the velocity field. The effects of surface tension and interactions with other surfaces are ignored.
+
+## Usage
+
+| Property                   | Description                                                                                                                                          | Required | Default value |
+|----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|----------|---------------|
+| UName                      | Name of the velocity field                                                                                                                           | no       | U             |
+| linearUpwindBlendingFactor | blending between linear and upwind for the face-to-point interpolation (1 corresponds to full linear and 0 corresponds to full upwind interpolation) | yes      |               |
+| laplaceSmoothing           | apply lapalace smoothing?                                                                                                                            | no       | no            |
+
+
+For a more detailed description of the more general settings, see [mesh velocity boundary conditions](mesh_velocity_bc.qmd).
+
+Example of the boundary condition specification:
+```c++
+<patchName>
+{
+    type            kinematicSurfaceVelocity;
+    linearUpwindBlendingFactor  0;
+    laplaceSmoothing    yes;
+    value           uniform (0 0 0);
+}
+```

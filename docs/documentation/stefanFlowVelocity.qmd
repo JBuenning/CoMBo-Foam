@@ -1,0 +1,38 @@
+---
+title: "Melt Flow velocity"
+---
+
+## Description
+
+The *meltFlowVelocity* boundary condition provides an inflow condition for the velocity field for boundaries between two phases of a phase-change material. The melt velocity is assumed to be given by the field *pointMotionU* and can for example stem from a [onePhaseStefanMeltVelocity](onePhaseStefanMeltVelocity.qmd) or a [twoPhaseStefanMeltVelocity](twoPhaseStefanMeltVelocity.qmd) or some other component that calculates the melt velocity. The flow velocity is calculated as
+
+$$ \mathbf{u} = \left( 1 - \frac{\rho_s}{\rho_l} \right) ((\mathbf{v} - \mathbf{\Phi}) \cdot \mathbf{n}) \, \mathbf{n} + \mathbf{\Phi}, $$
+
+where
+
+- $\mathbf{u}$: flow velocity
+- $\mathbf{v}$: mesh velocity
+- $\mathbf{n}$: surface normal vector
+- $\rho_s$: density of the material at solid state (the adjacent phase)
+- $\rho_l$: density of the material at liquid state (this phase)
+- $\mathbf{\Phi}$: constant velocity of the solid phase relative to a chosen referenece frame
+
+The equation is the result of mass conservation. If for example the density of the solid material is larger compared to the density of the liquid material, any melting must result in an inflow of fluid. For $\rho_s = \rho_l$ the relation simplifies to a simple Dirichlet boundary condition. If also $\mathbf{\Phi} = 0$, then the result becomes a no-slip condition. For this case, never use the *noSlip* boundary condition provided by OpenFOAM as it behaves differently when the underlying boundary is moving. Always use the *fixedValue* boundary condition with a value of (0 0 0);
+
+## Usage
+
+| Property                   | Description                                                                                                                                          | Required | Default value |
+|----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|----------|---------------|
+| rhoRatio                   | $$\frac{\rho_s}{\rho_l}$$                                                                                                                            | yes      |               |
+| URef                       | Velocity of the solid phase $\mathbf{\Phi}$ in chosen reference frame                                                                                       | no       | (0 0 0)       |
+
+Example of the boundary condition specification:
+```c++
+<patchName>
+{
+    type            meltFlowVelocity;
+    rhoRatio        0.917;
+    URef            (0 1e-3 0)
+    value           uniform (0 0 0);
+}
+```

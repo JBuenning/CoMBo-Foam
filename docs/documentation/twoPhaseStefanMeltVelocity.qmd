@@ -1,0 +1,50 @@
+---
+title: "Stefan Melt Velocity (multi region)"
+---
+
+## Description
+
+The *twoPhaseStefanMeltVelocity* provides a boundary condition for the mesh velocity that calculates the melting/refreezing velocity according to the classical Stefan condition. Made for multi-region cases where one region represents the liquid phase while another region represents the solid phase. This boundary condition can be used on the boundary between both phases and will move the boundary accoring to
+
+$$ \mathbf{v}  = \frac{1}{\rho_s h_m} \left( -\kappa_1 \left. \nabla T \right\vert_{\Omega^1} \cdot \mathbf{n}  + \kappa_2 \left. \nabla T \right\vert_{\Omega^2} \cdot \mathbf{n} \right) \mathbf{n} + (\mathbf{\Phi} \cdot \mathbf{n}) \mathbf{n}, $$
+
+where
+
+- $\mathbf{v}$: mesh velocity
+- $\mathbf{n}$: surface normal vector
+- $\kappa_1$: thermal conductivity for this region
+- $\kappa_2$: thermal conductivity for adjacent region
+- $\rho_s$: density of the material at solid state
+- $h_m$: latent heat of fusion
+- $\left. \nabla T \right\vert_{\Omega^1}$: temperature gradient evaluated at this region
+- $\left. \nabla T \right\vert_{\Omega^2}$: temperature gradient evaluated at adjacent region
+- $\mathbf{\Phi}$: constant velocity of the solid phase relative to a chosen referenece frame
+
+## Usage
+
+| Property                   | Description                                                                                                                                          | Required | Default value |
+|----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|----------|---------------|
+| rhoTimesH                  | $$\rho_s h_m$$                                                                                                                                       | yes      |               |
+| kappa                      | thermal conductivity at this region  $\kappa_1$                                                                                                      | yes      |               |
+| URef                       | Velocity of the solid phase $\mathbf{\Phi}$ in chosen reference frame                                                                                       | no       | (0 0 0)       |
+| TName                      | Name of the temperature field                                                                                                                        | no       | T             |
+| linearUpwindBlendingFactor | blending between linear and upwind for the face-to-point interpolation (1 corresponds to full linear and 0 corresponds to full upwind interpolation) | no       | 0             |
+| laplaceSmoothing           | apply lapalace smoothing?                                                                                                                            | no       | no            |
+
+
+For a more detailed description of the more general settings, see [mesh velocity boundary conditions](mesh_velocity_bc.qmd).
+
+Needs to be on an underlying mapped patch that is globally conforming (the touching patches on both sides of the interface must be equivalent). The boudary condition of the corresponding pointPatch on the other region must also be of type twoPhaseStefanMeltVelocity. The specification of the boundary condition should match on on both sides except for the thermal conductivity which might be different in the two regions.
+
+Example of the boundary condition specification:
+```c++
+<patchName>
+{
+    type        twoPhaseStefanMeltVelocity;
+    rhoTimesH   334e6;
+    kappa       0.56; //liquid water close to melt temperature
+    linearUpwindBlendingFactor  0;
+    laplaceSmoothing    yes;
+    value       uniform (0 0 0);
+}
+```

@@ -1,0 +1,58 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  12
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     foamMultiRun;
+
+regionSolvers
+{
+    water       incompressibleFluid;
+    ice         movingMesh;
+}
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt endTime;
+
+deltaT          0.05;
+writeInterval 10;
+endTime 40;
+
+
+writeControl    timeStep;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  14;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+libs
+(
+    "libcombo-foam-bc.so"
+);
+
+
+
+// ************************************************************************* //

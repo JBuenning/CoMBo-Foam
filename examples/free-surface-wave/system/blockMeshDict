@@ -1,0 +1,127 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  12
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+convertToMeters 1.0;
+
+L   1;      //channel length
+H0  0.05;   //distance bottom to water surface
+H1  0.07;    //hight of wave (from water surface)
+F   4;      //wave frequency
+
+// mesh parameters //
+dy     0.0025;
+dxToDy 3;
+
+Ny  #calc "ceil( 1. * $H0 / $dy)";
+Nx  #calc "ceil($L / ($dxToDy * $dy) )";
+
+
+#codeStream
+{
+    code
+    #{
+        using Foam::constant::mathematical::pi;
+        auto g = [&] (scalar x) {
+            return $H0 + $H1 * (0.5 + 0.5*cos(pi * x) );
+        };
+
+        const label N = 200;
+        List<vector> edge3_2;
+        List<vector> edge7_6;
+
+        for(int i=1; i<=N; ++i) {
+            scalar x = 1. * $L / $F * scalar(i) / N;
+            scalar y = g(x * $F / $L );
+            edge3_2.append(vector(x, y, 0));
+            edge7_6.append(vector(x, y, 1));
+        }
+
+        writeEntry(os, "edge3_2", edge3_2);
+        writeEntry(os, "edge7_6", edge7_6);
+    #};
+};
+
+vertices
+(
+    (0  0  0)
+    ($L 0  0)
+    ($L $H0 0)
+    (0  #calc "$H0 + $H1" 0)
+
+    (0  0  1)
+    ($L 0  1)
+    ($L $H0 1)
+    (0  #calc "$H0 + $H1" 1)
+);
+
+blocks
+(
+    hex (0 1 2 3 4 5 6 7) ($Nx $Ny 1) simpleGrading (1 1 1)
+);
+
+
+edges
+(
+ polyLine 3 2 $edge3_2
+ polyLine 7 6 $edge7_6
+);
+
+boundary
+(
+    left
+    {
+        type patch;
+        faces
+        (
+            (0 3 7 4)
+        );
+    }
+    right
+    {
+        type patch;
+        faces
+        (
+            (1 2 6 5)
+        );
+    }
+    bottom
+    {
+        type patch;
+        faces
+        (
+            (0 1 5 4)
+        );
+    }
+    freeSurface
+    {
+        type patch;
+        faces
+        (
+            (3 2 6 7)
+        );
+    }
+    frontAndBack
+    {
+        type empty;
+        faces
+        (
+            (0 1 2 3)
+            (4 5 6 7)
+        );
+    }
+);
+
+// ************************************************************************* //

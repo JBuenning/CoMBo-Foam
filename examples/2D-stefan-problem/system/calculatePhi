@@ -1,0 +1,40 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  12
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+
+type            coded;
+
+libs            ("libutilityFunctionObjects.so");
+
+name            calculatePhi;
+
+codeInclude
+#{
+    #include "surfaceFields.H"
+#};
+
+codeExecute
+#{
+    tmp<surfaceScalarField> tphi = surfaceScalarField::New
+    (
+        "phi",
+        mesh(),
+        dimVelocity * dimArea
+    );
+
+    if(foundObject<surfaceScalarField>("meshPhi"))
+    {
+        tphi.ref() = -1 * lookupObject<surfaceScalarField>("meshPhi");
+    }
+    else {
+        tphi.ref() = dimensionedScalar(dimVelocity * dimArea, 0.0);
+    }
+    store(tphi);
+#};
+
+
+// ************************************************************************* //

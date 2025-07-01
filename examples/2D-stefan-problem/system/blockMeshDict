@@ -1,0 +1,136 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  12
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+convertToMeters 1.0;
+
+Nx  32;
+Ny  32;
+
+
+#codeStream
+{
+    codeInclude
+    #{
+    #};
+
+    codeOptions
+    #{
+        -I$(LIB_SRC)/finiteVolume/lnInclude \
+    #};
+
+    codeLibs
+    #{
+        -lfiniteVolume
+    #};
+
+    code
+    #{
+        using Foam::constant::mathematical::pi;
+        auto g = [] (scalar x) {
+            return 0.5 - 0.2 * cos(0.5 * pi * x);
+        };
+
+        const label N = 200;
+        List<vector> edge3_2;
+        List<vector> edge7_6;
+
+        for(int i=1; i<N; ++i) {
+            scalar x = scalar(i) / N;
+            scalar y = g(x);
+            edge3_2.append(vector(x, y, 0));
+            edge7_6.append(vector(x, y, 1));
+        }
+
+        const scalar y_left = g(0);
+        const scalar y_right = g(1);
+
+        writeEntry(os, "edge3_2", edge3_2);
+        writeEntry(os, "edge7_6", edge7_6);
+        writeEntry(os, "y_left", y_left);
+        writeEntry(os, "y_right", y_right);
+    #};
+};
+
+vertices
+(
+    (0 0 0)
+    (1 0 0)
+    (1 $y_right 0)
+    (0 $y_left 0)
+    (0 0 1)
+    (1 0 1)
+    (1 $y_right 1)
+    (0 $y_left 1)
+);
+
+blocks
+(
+    hex (0 1 2 3 4 5 6 7) ($Nx $Ny 1) simpleGrading (1 1 1)
+);
+
+
+edges
+(
+ polyLine 3 2 $edge3_2
+ polyLine 7 6 $edge7_6
+);
+
+boundary
+(
+    left
+    {
+        type patch;
+        faces
+        (
+            (0 3 7 4)
+        );
+    }
+    right
+    {
+        type patch;
+        faces
+        (
+            (1 2 6 5)
+        );
+    }
+    ice
+    {
+        type patch;
+        faces
+        (
+            (2 3 7 6)
+        );
+    }
+    bottom
+    {
+        type patch;
+        faces
+        (
+            (0 1 5 4)
+        );
+    }
+    frontAndBack
+    {
+        type empty;
+        faces
+        (
+            (0 1 2 3)
+            (4 5 6 7)
+        );
+    }
+);
+
+// ************************************************************************* //

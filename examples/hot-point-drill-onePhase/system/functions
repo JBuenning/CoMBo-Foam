@@ -1,0 +1,30 @@
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      functions;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+
+temperatureTransport
+{
+    type            scalarTransport;
+    libs            ( "libsolverFunctionObjects.so" );
+    field           T;
+    diffusivity     constant;
+    D               0.15e-6;
+    nCorr           3;
+}
+drag
+{
+    type            forces;
+    libs            ( "libforces.so" );
+    patches         ( head shaft );
+    rho             rhoInf;
+    rhoInf          1000;
+    CofR            ( 0 0 0 );
+}
+
+// ************************************************************************* //
