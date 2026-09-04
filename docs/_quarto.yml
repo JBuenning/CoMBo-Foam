@@ -7,7 +7,7 @@ website:
   favicon: logo_square.png
   page-navigation: true
   reader-mode: false
-  # repo-url: https://github.com/JBuenning/CoMBo-Foam
+  # repo-url: https://combo-foam-c0c32c.pages.git.nrw/
   # repo-actions: [source, issue]
 
   sidebar:
@@ -19,7 +19,7 @@ website:
     collapse-level: 3
     tools:
       - icon: gitlab
-        href: https://github.com/JBuenning/CoMBo-Foam
+        href: https://combo-foam-c0c32c.pages.git.nrw/
         text: Visit the Repository
     contents:
       - installation.qmd
@@ -49,7 +49,7 @@ format:
     code-links:
       - text: Visit the Repository
         icon: gitlab
-        href: https://github.com/JBuenning/CoMBo-Foam
+        href: https://combo-foam-c0c32c.pages.git.nrw/
     theme:
       - cosmo
       - brand
