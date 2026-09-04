@@ -11,6 +11,7 @@ examples/**/polyMesh/
 examples/**/postProcessing/
 compile_commands.json
 .quarto/
+public/
 _site/
 .cache
 .vscode/
