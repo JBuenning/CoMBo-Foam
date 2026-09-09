@@ -13,7 +13,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 1 0 0 0 0 0];
+dimensions      [0 1 -1 0 0 0 0];
 
 #codeStream
 {
@@ -35,9 +35,8 @@ dimensions      [0 1 0 0 0 0 0];
 
     code
     #{
-        using Foam::constant::mathematical::pi;
         auto g = [] (scalar x) {
-            return 0.5 - 0.2 * cos(0.5 * pi * x);
+            return 0.5 - 0.2 * cos(0.5 * M_PI * x);
         };
 
         const IOdictionary& d = static_cast<const IOdictionary&>(dict);
@@ -50,7 +49,7 @@ dimensions      [0 1 0 0 0 0 0];
             s0[i] = g(x[i]);
         }
         // scaling bec. of melting in only normal direction
-        scalarField f_n (cos(asin(0.1 * pi * sin(0.5 * pi * x))));
+        scalarField f_n (cos(asin(0.1 * M_PI * sin(0.5 * M_PI * x))));
         const vectorField v( vector(0, 1, 0) * f_n * y / (s0 * s0) );
 
         writeEntry(os, "internalField", v);

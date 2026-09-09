@@ -38,9 +38,8 @@ Ny  32;
 
     code
     #{
-        using Foam::constant::mathematical::pi;
         auto g = [] (scalar x) {
-            return 0.5 - 0.2 * cos(0.5 * pi * x);
+            return 0.5 - 0.2 * cos(0.5 * M_PI * x);
         };
 
         const label N = 200;
