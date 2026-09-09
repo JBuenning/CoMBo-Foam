@@ -49,6 +49,8 @@ temperatureTransport
     field           T;
     diffusivity     constant;
     D               1;
+    execteControl   timeStep;
+    writeControl    writeTime;
 }
 ```
 When executed, this functionObject will solve an advection-diffusion equation for a field called "T": Our temperature field. This alone would however not give the correct result as we need to account for the moving mesh. We will do so by computing a flux field "phi" as the negative "meshFlux". "phi" is used as the advective term in the *scalarTransport* functionObject. We will do this using an on-the-fly constructed functionObject:
