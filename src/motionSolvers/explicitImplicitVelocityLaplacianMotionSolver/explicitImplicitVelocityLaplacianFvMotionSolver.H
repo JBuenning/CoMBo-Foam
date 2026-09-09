@@ -8,7 +8,7 @@ Description
 #ifndef explicitImplicitVelocityLaplacianFvMotionSolver_H
 #define explicitImplicitVelocityLaplacianFvMotionSolver_H
 
-#include "velocityMotionSolver.H"
+#include "velocity_pointMeshMover.H"
 #include "fvMotionSolver.H"
 
 
@@ -18,15 +18,21 @@ namespace Foam
 // Forward class declarations
 class motionDiffusivity;
 
+namespace fvMotionSolvers
+{
+
 class explicitImplicitVelocityLaplacianFvMotionSolver
 :
-    public velocityMotionSolver,
-    public fvMotionSolver
+    public fvMotionSolver,
+    public pointMeshMovers::velocity
 {
     // Private Data
 
         //- Cell-centre motion field
         mutable volVectorField cellMotionU_;
+
+        //- Diffusivity type and data stream
+        ITstream diffusivityType_;
 
         //- Diffusivity used to control the motion
         autoPtr<motionDiffusivity> diffusivityPtr_;
@@ -43,10 +49,17 @@ public:
 
     // Constructors
 
+
+        //- Construct from fvMesh and dictionary
+        explicitImplicitVelocityLaplacianFvMotionSolver
+        (
+            fvMesh&,
+            const dictionary&
+        );
+
         //- Construct from polyMesh and dictionary
         explicitImplicitVelocityLaplacianFvMotionSolver
         (
-            const word& name,
             const polyMesh&,
             const dictionary&
         );
@@ -77,10 +90,7 @@ public:
         }
 
         //- Return point location obtained from the current motion field
-        virtual tmp<pointField> curPoints() const;
-
-        //- Solve for motion
-        virtual void solve();
+        virtual tmp<pointField> newPoints();
 
         //- Update corresponding to the given map
         virtual void topoChange(const polyTopoChangeMap&);
@@ -95,6 +105,7 @@ public:
         void operator=(const explicitImplicitVelocityLaplacianFvMotionSolver&) = delete;
 };
 
+} // End namespace fvMotionSolvers
 } // End namespace Foam
 
 #endif

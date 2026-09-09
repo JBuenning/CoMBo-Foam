@@ -8,28 +8,37 @@
 
 namespace Foam
 {
+namespace fvMotionSolvers
+{
     defineTypeNameAndDebug(explicitImplicitVelocityLaplacianFvMotionSolver, 0);
 
     addToRunTimeSelectionTable
     (
-        motionSolver,
+        fvMeshMover,
+        explicitImplicitVelocityLaplacianFvMotionSolver,
+        fvMesh
+    );
+
+    addToRunTimeSelectionTable
+    (
+        pointMeshMover,
         explicitImplicitVelocityLaplacianFvMotionSolver,
         dictionary
     );
+}
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::explicitImplicitVelocityLaplacianFvMotionSolver::explicitImplicitVelocityLaplacianFvMotionSolver
+Foam::fvMotionSolvers::explicitImplicitVelocityLaplacianFvMotionSolver::explicitImplicitVelocityLaplacianFvMotionSolver
 (
-    const word& name,
     const polyMesh& mesh,
     const dictionary& dict
 )
 :
-    velocityMotionSolver(name, mesh, dict, typeName),
     fvMotionSolver(mesh),
+    pointMeshMovers::velocity(mesh, dict, typeName),
     cellMotionU_
     (
         IOobject
@@ -40,7 +49,7 @@ Foam::explicitImplicitVelocityLaplacianFvMotionSolver::explicitImplicitVelocityL
             IOobject::READ_IF_PRESENT,
             IOobject::AUTO_WRITE
         ),
-        fvMesh_,
+        fvMotionSolver::mesh(),
         dimensionedVector
         (
             "cellMotionU",
@@ -49,72 +58,45 @@ Foam::explicitImplicitVelocityLaplacianFvMotionSolver::explicitImplicitVelocityL
         ),
         cellMotionBoundaryTypes<vector>(pointMotionU_.boundaryField())
     ),
+    diffusivityType_(dict.lookup("diffusivity")),
     diffusivityPtr_
     (
-        motionDiffusivity::New(fvMesh_, coeffDict().lookup("diffusivity"))
+        motionDiffusivity::New(fvMotionSolver::mesh(), diffusivityType_)
     ),
-    timeIndex_(fvMesh_.time().timeIndex()),
-    theta_(coeffDict().lookup<scalar>("theta"))
+    timeIndex_(fvMotionSolver::mesh().time().timeIndex()),
+    theta_(dict.lookup<scalar>("theta"))
 {
     // make sure old time is saved and available in first iteration
     pointMotionU_.oldTime();
 }
 
 
+Foam::fvMotionSolvers::explicitImplicitVelocityLaplacianFvMotionSolver::explicitImplicitVelocityLaplacianFvMotionSolver
+(
+    fvMesh& mesh,
+    const dictionary& dict
+)
+:
+    explicitImplicitVelocityLaplacianFvMotionSolver(mesh.poly(), dict)
+{}
+
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-Foam::explicitImplicitVelocityLaplacianFvMotionSolver::~explicitImplicitVelocityLaplacianFvMotionSolver()
+Foam::fvMotionSolvers::explicitImplicitVelocityLaplacianFvMotionSolver::~explicitImplicitVelocityLaplacianFvMotionSolver()
 {}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 Foam::tmp<Foam::pointField>
-Foam::explicitImplicitVelocityLaplacianFvMotionSolver::curPoints() const
-{
-    volPointInterpolation::New(fvMesh_).interpolate
-    (
-        cellMotionU_,
-        pointMotionU_
-    );
-
-    tmp<pointField> tcurPoints;
-
-    if (timeIndex_ != fvMesh_.time().timeIndex())
-    {
-        timeIndex_ = fvMesh_.time().timeIndex();
-        tcurPoints = tmp<pointField>
-        (
-            fvMesh_.points()
-            + fvMesh_.time().deltaTValue() *
-            (theta_ * pointMotionU_.primitiveField() + (1. - theta_) * pointMotionU_.oldTime().primitiveField())
-        );
-    }
-    else
-    {
-        tcurPoints = tmp<pointField>
-        (
-            fvMesh_.oldPoints()
-            + fvMesh_.time().deltaTValue() *
-            (theta_ * pointMotionU_.primitiveField() + (1. - theta_) * pointMotionU_.oldTime().primitiveField())
-        );
-    }
-
-    twoDCorrectPoints(tcurPoints.ref());
-
-    return tcurPoints;
-}
-
-
-void Foam::explicitImplicitVelocityLaplacianFvMotionSolver::solve()
+Foam::fvMotionSolvers::explicitImplicitVelocityLaplacianFvMotionSolver::newPoints()
 {
 
     // The points have moved so before interpolation update
     // the fvMotionSolver accordingly
-    movePoints(fvMesh_.points());
+    movePoints(mesh().points());
 
     diffusivityPtr_->correct();
-
     pointMotionU_.boundaryFieldRef().updateCoeffs();
 
     Foam::solve
@@ -126,6 +108,39 @@ void Foam::explicitImplicitVelocityLaplacianFvMotionSolver::solve()
             "laplacian(diffusivity,cellMotionU)"
         )
     );
+
+
+    volPointInterpolation::New(mesh()).interpolate
+    (
+        cellMotionU_,
+        pointMotionU_
+    );
+
+    tmp<pointField> tcurPoints;
+
+    if (timeIndex_ != mesh().time().timeIndex())
+    {
+        timeIndex_ = mesh().time().timeIndex();
+        tcurPoints = tmp<pointField>
+        (
+            mesh().points()
+            + mesh().time().deltaTValue() *
+            (theta_ * pointMotionU_.primitiveField() + (1. - theta_) * pointMotionU_.oldTime().primitiveField())
+        );
+    }
+    else
+    {
+        tcurPoints = tmp<pointField>
+        (
+            mesh().oldPoints()
+            + mesh().time().deltaTValue() *
+            (theta_ * pointMotionU_.primitiveField() + (1. - theta_) * pointMotionU_.oldTime().primitiveField())
+        );
+    }
+
+    twoDCorrectPoints(tcurPoints.ref());
+
+    return tcurPoints;
 }
 
 
@@ -136,39 +151,39 @@ void Foam::explicitImplicitVelocityLaplacianFvMotionSolver::solve()
 //}
 
 
-void Foam::explicitImplicitVelocityLaplacianFvMotionSolver::topoChange
+void Foam::fvMotionSolvers::explicitImplicitVelocityLaplacianFvMotionSolver::topoChange
 (
     const polyTopoChangeMap& map
 )
 {
-    velocityMotionSolver::topoChange(map);
+    pointMeshMovers::velocity::topoChange(map);
 
     // Update diffusivity. Note two stage to make sure old one is de-registered
     // before creating/registering new one.
     diffusivityPtr_.reset(nullptr);
+    diffusivityType_.rewind();
     diffusivityPtr_ = motionDiffusivity::New
     (
-        fvMesh_,
-        coeffDict().lookup("diffusivity")
+        mesh(),
+        diffusivityType_
     );
-    theta_ = coeffDict().lookup<scalar>("theta"); //maybe unnecessary
 }
 
 
-void Foam::explicitImplicitVelocityLaplacianFvMotionSolver::mapMesh
+void Foam::fvMotionSolvers::explicitImplicitVelocityLaplacianFvMotionSolver::mapMesh
 (
     const polyMeshMap& map
 )
 {
-    velocityMotionSolver::mapMesh(map);
+    pointMeshMovers::velocity::mapMesh(map);
 
     // Update diffusivity. Note two stage to make sure old one is de-registered
     // before creating/registering new one.
     diffusivityPtr_.reset(nullptr);
+    diffusivityType_.rewind();
     diffusivityPtr_ = motionDiffusivity::New
     (
-        fvMesh_,
-        coeffDict().lookup("diffusivity")
+        mesh(),
+        diffusivityType_
     );
-    // theta_ = coeffDict().lookup<scalar>("theta"); //maybe unnecessary
 }
