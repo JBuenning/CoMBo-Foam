@@ -119,7 +119,7 @@ void twoPhaseStefanMeltVelocityPointPatchVectorField::updateCoeffs()
 
     const volScalarField& TField = this->db().lookupObject<volScalarField>(TName_);
     const fvPatchScalarField& TPatchField = TField.boundaryField()[this->patch().index()];
-    const polyPatch& pp = TPatchField.patch().patch();
+    const polyPatch& pp = TPatchField.patch().poly();
 
     const mappedPatchBase& mpp = mappedPatchBase::getMap(pp);
     const label patchINbr = mpp.nbrPolyPatch().index();

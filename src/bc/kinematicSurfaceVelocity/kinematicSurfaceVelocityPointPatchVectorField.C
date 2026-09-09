@@ -92,7 +92,7 @@ void kinematicSurfaceVelocityPointPatchVectorField::updateCoeffs()
 
     const volVectorField& UField = this->db().lookupObject<volVectorField>(UName_);
     const fvPatchVectorField& UPatchField = UField.boundaryField()[this->patch().index()];
-    const polyPatch& pp = UPatchField.patch().patch();
+    const polyPatch& pp = UPatchField.patch().poly();
 
     const vectorField pointVelocity =
         surfaceVelocityTools_.pointVelocityFromFaceVelocity(UPatchField & pp.faceNormals(), pp);

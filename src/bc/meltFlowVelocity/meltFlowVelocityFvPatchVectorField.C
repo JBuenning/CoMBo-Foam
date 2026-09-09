@@ -13,7 +13,7 @@ Foam::meltFlowVelocityFvPatchVectorField::
 meltFlowVelocityFvPatchVectorField
 (
     const fvPatch& p,
-    const DimensionedField<vector, volMesh>& iF,
+    const DimensionedField<vector, fvMesh>& iF,
     const dictionary& dict
 )
 :
@@ -36,7 +36,7 @@ meltFlowVelocityFvPatchVectorField
 (
     const meltFlowVelocityFvPatchVectorField& ptf,
     const fvPatch& p,
-    const DimensionedField<vector, volMesh>& iF,
+    const DimensionedField<vector, fvMesh>& iF,
     const fieldMapper& mapper
 )
 :
@@ -50,7 +50,7 @@ Foam::meltFlowVelocityFvPatchVectorField::
 meltFlowVelocityFvPatchVectorField
 (
     const meltFlowVelocityFvPatchVectorField& ptf,
-    const DimensionedField<vector, volMesh>& iF
+    const DimensionedField<vector, fvMesh>& iF
 )
 :
     fixedValueFvPatchVectorField(ptf, iF),
@@ -87,7 +87,7 @@ void Foam::meltFlowVelocityFvPatchVectorField::updateCoeffs()
         return;
     }
 
-    const polyPatch& pp = patch().patch();
+    const polyPatch& pp = patch().poly();
     const PrimitivePatchInterpolation<polyPatch> linearInterp(pp);
 
     const pointVectorField& pointMotionU = db().lookupObject<pointVectorField>("pointMotionU");

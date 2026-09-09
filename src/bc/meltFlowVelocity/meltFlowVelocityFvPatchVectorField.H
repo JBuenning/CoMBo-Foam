@@ -33,7 +33,7 @@ public:
         meltFlowVelocityFvPatchVectorField
         (
             const fvPatch&,
-            const DimensionedField<vector, volMesh>&,
+            const DimensionedField<vector, fvMesh>&,
             const dictionary&
         );
 
@@ -43,7 +43,7 @@ public:
         (
             const meltFlowVelocityFvPatchVectorField&,
             const fvPatch&,
-            const DimensionedField<vector, volMesh>&,
+            const DimensionedField<vector, fvMesh>&,
             const fieldMapper&
         );
 
@@ -57,13 +57,13 @@ public:
         meltFlowVelocityFvPatchVectorField
         (
             const meltFlowVelocityFvPatchVectorField&,
-            const DimensionedField<vector, volMesh>&
+            const DimensionedField<vector, fvMesh>&
         );
 
         //- Construct and return a clone setting internal field reference
         virtual tmp<fvPatchVectorField> clone
         (
-            const DimensionedField<vector, volMesh>& iF
+            const DimensionedField<vector, fvMesh>& iF
         ) const
         {
             return tmp<fvPatchVectorField>
