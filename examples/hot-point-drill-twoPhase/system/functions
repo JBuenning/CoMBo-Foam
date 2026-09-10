@@ -15,7 +15,8 @@ temperatureTransportWater
     field           T;
     diffusivity     constant;
     D               0.15e-6;
-    nCorr           1;
+    execteControl   timeStep;
+    writeControl    writeTime;
     region          water;
 }
 
@@ -28,7 +29,8 @@ temperatureTransportIce
     field           T;
     diffusivity     constant;
     D               1.02e-6;
-    nCorr           1;
+    execteControl   timeStep;
+    writeControl    writeTime;
     region          ice;
 }
 

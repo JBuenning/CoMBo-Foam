@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Version:  12
+    \\  /    A nd           | Version:  14
      \\/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -30,10 +30,10 @@ dy_ice  0.0002; //height of first cell in the ice
 r_ice   1.03; //cell-to-cell expansion ration in ice
 
 
-Nx_head #calc "round(0.5 * $R * M_PI / $dx)";
-Nx_shaft #calc "round(($L - $R) / $dx)";
+Nx_head #calc "int(round(0.5 * $R * M_PI / $dx))";
+Nx_shaft #calc "int(round(($L - $R) / $dx))";
 
-Ny_ice	#calc "ceil( 1. / log($r_ice) * log(1.+($r_ice-1.) * ($RInfty - $delta) / $dy_ice) )";
+Ny_ice	#calc "int(ceil( 1. / log($r_ice) * log(1.+($r_ice-1.) * ($RInfty - $delta) / $dy_ice) ))";
 Ry_ice	#calc "1. / pow($r_ice, $Ny_ice - 1)";
 
 tanalpha #calc "tan(degToRad($alpha))";

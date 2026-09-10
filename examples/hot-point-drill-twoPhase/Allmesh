@@ -1,5 +1,5 @@
 blockMesh
-splitMeshRegions -cellZones -overwrite -noFields
+splitMeshRegions -cellZones all -overwrite -noFields
 rm constant/cellToRegion
 rm 0/cellToRegion
 paraFoam -region water -touch
