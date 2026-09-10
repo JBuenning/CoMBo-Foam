@@ -148,27 +148,48 @@ void surfaceVelocityTools::updateLaplaceCorrection(const polyPatch& pp)
         }
     }
 
-    forAll(pp.meshPoints(), localPointIdx)
-    {
-        vector& correction = laplacePointCorrection_ [localPointIdx];
-        const label& globalPointIdx = pp.meshPoints()[localPointIdx];
-        List<vector> restrictions;
+    // old version, does not use cached patch normals from other patches
+    // forAll(pp.meshPoints(), localPointIdx)
+    // {
+    //     vector& correction = laplacePointCorrection_ [localPointIdx];
+    //     const label& globalPointIdx = pp.meshPoints()[localPointIdx];
+    //     List<vector> restrictions;
+    //
+    //     forAllConstIter(labelHashSet, pointPatchAddressing[localPointIdx], patchIdxIter)
+    //     {
+    //         const polyPatch& other_pp = pp.boundaryMesh()[patchIdxIter.key()];
+    //         const label otherLocalIdx = other_pp.whichPoint(globalPointIdx);
+    //         vector newRestriction = other_pp.pointNormals()[otherLocalIdx];
+    //         forAll(restrictions, restrictionI) //Gram-Schmidt proc.
+    //         {
+    //             newRestriction -= (restrictions[restrictionI] & newRestriction) * restrictions[restrictionI];
+    //         }
+    //         newRestriction = normalised(newRestriction);
+    //         correction -= (correction & newRestriction) * newRestriction;
+    //         restrictions.append(std::move(newRestriction));
+    //     }
+    //     // factor of 2 to make laplace iteration stable, for both implicit and explicit mesh update
+    //     correction /= 2. * max(1., nNeighbourPoints[localPointIdx]);
+    // }
 
-        forAllConstIter(labelHashSet, pointPatchAddressing[localPointIdx], patchIdxIter)
-        {
-            const polyPatch& other_pp = pp.boundaryMesh()[patchIdxIter.key()];
-            const label otherLocalIdx = other_pp.whichPoint(globalPointIdx);
-            vector newRestriction = other_pp.pointNormals()[otherLocalIdx];
-            forAll(restrictions, restrictionI) //Gram-Schmidt proc.
-            {
-                newRestriction -= (restrictions[restrictionI] & newRestriction) * restrictions[restrictionI];
-            }
-            newRestriction = normalised(newRestriction);
-            correction -= (correction & newRestriction) * newRestriction;
-            restrictions.append(std::move(newRestriction));
+    const vectorField pointNormals = boundaryConformingPointNormals(pp);
+    forAll(laplacePointCorrection_, pointI)
+    {
+        vector& correction = laplacePointCorrection_[pointI];
+        const List<vector>& pointConstraints = pointNormalConstraints_[pointI];
+        if (pointConstraints.size() > 1) {
+            correction = vector(0, 0, 0);
+            continue;
         }
+        if (pointConstraints.size() == 1) {
+            correction
+                -= pointConstraints[0] * (pointConstraints[0] & correction);
+        }
+        correction
+            -= pointNormals[pointI] * (pointNormals[pointI] & correction);
+
         // factor of 2 to make laplace iteration stable, for both implicit and explicit mesh update
-        correction /= 2. * max(1., nNeighbourPoints[localPointIdx]);
+        correction /= 2. * max(1., nNeighbourPoints[pointI]);
     }
 }
 
