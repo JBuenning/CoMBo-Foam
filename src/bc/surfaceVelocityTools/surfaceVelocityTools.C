@@ -13,6 +13,7 @@
 #include "vectorField.H"
 #include "PrimitivePatchInterpolation.H"
 #include "surfaceVelocityInterpolation.H"
+#include "valuePointPatchField.H"
 
 
 namespace Foam
@@ -31,8 +32,11 @@ surfaceVelocityTools
     laplaceSmoothing_(dict.lookupOrDefault<bool>("laplaceSmoothing", false)),
     timeIndex_(-1),
     laplacePointCorrection_(p.size(), vector(0, 0, 0)),
-    upwindInterp_(nullptr)
-{}
+    upwindInterp_(nullptr),
+    pointNormalConstraints_()
+{
+    updatePointNormalConstraints(p.poly());
+}
 
 
 surfaceVelocityTools::
@@ -46,8 +50,11 @@ surfaceVelocityTools
     laplaceSmoothing_(other.laplaceSmoothing_),
     timeIndex_(-1),
     laplacePointCorrection_(p.size(), vector(0, 0, 0)),
-    upwindInterp_(nullptr)
-{}
+    upwindInterp_(nullptr),
+    pointNormalConstraints_()
+{
+    updatePointNormalConstraints(p.poly());
+}
 
 
 surfaceVelocityTools::
@@ -60,11 +67,44 @@ surfaceVelocityTools
     laplaceSmoothing_(other.laplaceSmoothing_),
     timeIndex_(-1),
     laplacePointCorrection_(other.laplacePointCorrection_.size(), vector(0, 0, 0)),
-    upwindInterp_(nullptr)
+    upwindInterp_(nullptr),
+    pointNormalConstraints_(other.pointNormalConstraints_)
 {}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+
+void surfaceVelocityTools::updatePointNormalConstraints(const polyPatch& pp)
+{
+    pointNormalConstraints_ = List<List<vector>>(pp.nPoints());
+
+    forAll(pp.boundaryPoints(), boundaryPointIdx)
+    {
+        const label localPointIdx = pp.boundaryPoints()[boundaryPointIdx];
+        const label globalPointIdx = pp.meshPoints()[localPointIdx];
+        List<vector>& restrictions = pointNormalConstraints_[localPointIdx];
+
+        forAll(pp.boundaryMesh(), patchI)
+        {
+            const polyPatch& other_pp = pp.boundaryMesh()[patchI];
+
+            if (other_pp.index() == pp.index()) continue; //skip this patch
+
+            const label otherLocalIdx = other_pp.whichPoint(globalPointIdx);
+            if (otherLocalIdx != -1) // point is both on this and on other patch
+            {
+                vector newRestriction = other_pp.pointNormals()[otherLocalIdx];
+                forAll(restrictions, restrictionI) //Gram-Schmidt proc.
+                {
+                    newRestriction -= (restrictions[restrictionI] & newRestriction) * restrictions[restrictionI];
+                }
+                restrictions.append(normalised(newRestriction));
+            }
+        }
+    }
+}
+
 
 void surfaceVelocityTools::updateLaplaceCorrection(const polyPatch& pp)
 {
@@ -136,31 +176,15 @@ void surfaceVelocityTools::updateLaplaceCorrection(const polyPatch& pp)
 vectorField surfaceVelocityTools::boundaryConformingPointNormals(const polyPatch &pp) const
 {
     vectorField n = pp.pointNormals();
-
     forAll(pp.boundaryPoints(), boundaryPointIdx)
     {
-        const label& localPointIdx = pp.boundaryPoints()[boundaryPointIdx];
-        const label& globalPointIdx = pp.meshPoints()[localPointIdx];
-        List<vector> restrictions;
+        const label localPointIdx = pp.boundaryPoints()[boundaryPointIdx];
+        const List<vector>& restrictions = pointNormalConstraints_[localPointIdx];
 
-        forAll(pp.boundaryMesh(), patchI)
+        forAll(restrictions, restrictionI)
         {
-            const polyPatch& other_pp = pp.boundaryMesh()[patchI];
-
-            if (other_pp.index() == pp.index()) continue; //skip this patch
-
-            const label otherLocalIdx = other_pp.whichPoint(globalPointIdx);
-            if (otherLocalIdx != -1) // point is both on this and on other patch
-            {
-                vector newRestriction = other_pp.pointNormals()[otherLocalIdx];
-                forAll(restrictions, restrictionI) //Gram-Schmidt proc.
-                {
-                    newRestriction -= (restrictions[restrictionI] & newRestriction) * restrictions[restrictionI];
-                }
-                newRestriction = normalised(newRestriction);
-                n[localPointIdx] -= (n[localPointIdx] & newRestriction) * newRestriction;
-                restrictions.append(std::move(newRestriction));
-            }
+            const vector& restriction = restrictions[restrictionI];
+            n[localPointIdx] -= (n[localPointIdx] & restriction) * restriction;
         }
         n[localPointIdx] = normalised(n[localPointIdx]);
     }

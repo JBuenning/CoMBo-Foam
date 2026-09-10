@@ -44,7 +44,9 @@ private:
     label timeIndex_;
     vectorField laplacePointCorrection_;
     autoPtr<UpwindSurfaceVelocityInterpolation> upwindInterp_;
+    List<List<vector>> pointNormalConstraints_;
 
+    void updatePointNormalConstraints(const polyPatch& pp);
     void updateLaplaceCorrection(const polyPatch& pp);
     vectorField boundaryConformingPointNormals(const polyPatch& pp) const;
 
