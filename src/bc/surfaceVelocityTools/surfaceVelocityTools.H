@@ -87,9 +87,16 @@ public:
             const polyPatch& pp
         );
 
+        // could be used to make one patch dominant
+        // currently not used
+        void overwriteNeighborVeolocities
+        (
+            const polyPatch& pp,
+            pointVectorField::Boundary& velocityField
+        ) const;
+
         void write(Ostream&) const;
 };
-
 
 } // End namespace Foam
 

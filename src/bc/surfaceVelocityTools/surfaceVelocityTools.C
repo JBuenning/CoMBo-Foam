@@ -229,6 +229,45 @@ vectorField surfaceVelocityTools::pointVelocityFromFaceVelocity
     return pointVelocity;
 }
 
+void surfaceVelocityTools::overwriteNeighborVeolocities
+(
+    const polyPatch& pp,
+    pointVectorField::Boundary& velocityField
+) const
+{
+    const pointPatchField<vector>& thisVelocityField = velocityField[pp.index()];
+
+    forAll(pp.boundaryMesh(), patchI)
+    {
+        const polyPatch& other_pp = pp.boundaryMesh()[patchI];
+
+        if (other_pp.index() == pp.index()) continue; //skip own patch
+
+        pointPatchField<vector>& otherGenericVelocityField = velocityField[patchI];
+        if (!isA<valuePointPatchField<vector>>(otherGenericVelocityField))
+        {
+            continue; // The patch field does not expose writable patch-local values
+        }
+        valuePointPatchField<vector>& otherVelocityField =
+            refCast<valuePointPatchField<vector>>(otherGenericVelocityField);
+
+        // maybe dangerous
+        otherVelocityField.updateCoeffs();
+
+        forAll(pp.boundaryPoints(), boundaryPointIdx)
+        {
+            const label& localPointIdx = pp.boundaryPoints()[boundaryPointIdx];
+            const label& globalPointIdx = pp.meshPoints()[localPointIdx];
+
+            const label otherLocalIdx = other_pp.whichPoint(globalPointIdx);
+            if (otherLocalIdx != -1) // point is both on this and on other patch
+            {
+                otherVelocityField[otherLocalIdx] = thisVelocityField.internalField()[localPointIdx];
+            }
+        }
+    }
+}
+
 
 void surfaceVelocityTools::write(Ostream& os) const
 {
