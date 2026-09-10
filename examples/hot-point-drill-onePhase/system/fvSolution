@@ -53,6 +53,7 @@ solvers
 	preconditioner	DILU;
 	tolerance	1e-6;
         relTol          0;
+        nCorrectors     2;  //acts as non-orthogonal correctors
     }
 }
 

@@ -69,7 +69,8 @@ temperatureTransport
     field           T;
     diffusivity     constant;
     D               0.15e-6;
-    nCorr           3;
+    execteControl   timeStep;
+    writeControl    writeTime;
 }
 ```
 When executed, this functionObject will solve an advection-diffusion equation for a field called "T": Our temperature field. In general, the combination of the *incompressibleFluid* solver together with the *scalarTransport* functionObject is not the only possible option. Instead we could have also chosen the *fluid* solver which provides a temperature field by solving an actual energy equation.

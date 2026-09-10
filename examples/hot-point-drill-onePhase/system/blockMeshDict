@@ -45,8 +45,8 @@ vertices
 
 blocks
 (
-    hex (0 1 4 5 0 6 9 5) (#calc "round(0.5 * $R * M_PI / $dx)" $Ny 1) simpleGrading (1 1 1)
-    hex (1 2 3 4 6 7 8 9) (#calc "round(($L - $R) / $dx)" $Ny 1) simpleGrading (1 1 1)
+    hex (0 1 4 5 0 6 9 5) (#calc "int(round(0.5 * $R * M_PI / $dx))" $Ny 1) simpleGrading (1 1 1)
+    hex (1 2 3 4 6 7 8 9) (#calc "int(round(($L - $R) / $dx))" $Ny 1) simpleGrading (1 1 1)
 );
 
 

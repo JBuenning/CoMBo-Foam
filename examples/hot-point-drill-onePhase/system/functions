@@ -15,7 +15,8 @@ temperatureTransport
     field           T;
     diffusivity     constant;
     D               0.15e-6;
-    nCorr           3;
+    execteControl   timeStep;
+    writeControl    writeTime;
 }
 drag
 {
