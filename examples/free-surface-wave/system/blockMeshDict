@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Version:  12
+    \\  /    A nd           | Version:  14
      \\/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -25,17 +25,16 @@ F   4;      //wave frequency
 dy     0.0025;
 dxToDy 3;
 
-Ny  #calc "ceil( 1. * $H0 / $dy)";
-Nx  #calc "ceil($L / ($dxToDy * $dy) )";
+Ny  #calc "int(ceil( 1. * $H0 / $dy))";
+Nx  #calc "int(ceil($L / ($dxToDy * $dy) ))";
 
 
 #codeStream
 {
     code
     #{
-        using Foam::constant::mathematical::pi;
         auto g = [&] (scalar x) {
-            return $H0 + $H1 * (0.5 + 0.5*cos(pi * x) );
+            return $H0 + $H1 * (0.5 + 0.5*cos(M_PI * x) );
         };
 
         const label N = 200;
