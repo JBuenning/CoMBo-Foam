@@ -4,7 +4,7 @@ title: "Installation"
 
 ## Compilation
 
-The compilation requires an active OpenFOAM environment ([OpenFOAM](https://openfoam.org), v12).
+The compilation requires an active OpenFOAM environment ([OpenFOAM](https://openfoam.org), v14).
 
 The location of the cloned repository is not relevant as the location of the binaries is fixed by environment variables from the OpenFOAM environment. However, the general choice for additional OpenFOAM code is whatever $WM_PROJECT_USER_DIR evaluates to. To download and compile, type
 

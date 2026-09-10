@@ -26,4 +26,4 @@ The easiest way to see what this library can do is to have a look at the example
 
 ## Which OpenFOAM versions are supported
 
-Currently the only supported OpenFOAM version is v12 of the [openfoam.org](https://openfoam.org) branch of OpenFOAM. Support for future versions of this branch is also planned.
+Currently, the only fully supported OpenFOAM version is v14 of the [openfoam.org](https://openfoam.org) branch of OpenFOAM. Support for future versions of this branch is also planned. v12 is partially supported.
